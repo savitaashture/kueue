@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y make docker.io bash wget
+          sudo apt-get install -y make bash wget
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
