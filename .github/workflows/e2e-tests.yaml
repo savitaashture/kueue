@@ -39,6 +39,11 @@ jobs:
           wget -O bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64
           chmod +x bin/yq        
 
+      - name: Set e2e environment variables
+        run: |
+          echo "CREATE_KIND_CLUSTER=true" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=chart-testing" >> $GITHUB_ENV
+
       - name: Set E2E_KIND_VERSION
         run: echo "E2E_KIND_VERSION=kindest/node:v1.27.3" >> $GITHUB_ENV
 
