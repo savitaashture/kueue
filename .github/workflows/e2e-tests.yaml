@@ -43,6 +43,7 @@ jobs:
         run: |
           echo "CREATE_KIND_CLUSTER=true" >> $GITHUB_ENV
           echo "KIND_CLUSTER_NAME=chart-testing" >> $GITHUB_ENV
+          echo "ARTIFACTS=bin" >> $GITHUB_ENV
 
       - name: Set E2E_KIND_VERSION
         run: echo "E2E_KIND_VERSION=kindest/node:v1.27.3" >> $GITHUB_ENV
