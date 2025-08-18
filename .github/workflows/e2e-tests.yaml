@@ -33,5 +33,8 @@ jobs:
       - name: Build binaries
         run: make build
 
+      - name: Set E2E_KIND_VERSION
+        run: echo "E2E_KIND_VERSION=kindest/node:v1.27.3" >> $GITHUB_ENV
+
       - name: Run e2e tests
         run: hack/e2e-test.sh
