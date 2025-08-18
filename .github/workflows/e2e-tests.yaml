@@ -33,6 +33,12 @@ jobs:
       - name: Build binaries
         run: make build
 
+      - name: Install yq
+        run: |
+          mkdir -p bin
+          wget -O bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64
+          chmod +x bin/yq        
+
       - name: Set E2E_KIND_VERSION
         run: echo "E2E_KIND_VERSION=kindest/node:v1.27.3" >> $GITHUB_ENV
 
