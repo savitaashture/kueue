@@ -54,5 +54,8 @@ jobs:
       - name: Set E2E_KIND_VERSION
         run: echo "E2E_KIND_VERSION=kindest/node:v1.27.3" >> $GITHUB_ENV
 
+      - name: Install Kueue in kind cluster
+        run: make deploy        
+
       - name: Run e2e tests
         run: hack/e2e-test.sh
