@@ -55,7 +55,11 @@ jobs:
         run: echo "E2E_KIND_VERSION=kindest/node:v1.27.3" >> $GITHUB_ENV
 
       - name: Install Kueue in kind cluster
-        run: make deploy        
+        run: make deploy
+
+      - name: Wait for Kueue pod to be running
+        run: |
+          kubectl wait --for=condition=Ready pod -l control-plane=controller-manager -n kueue-system --timeout=180s        
 
       - name: Run e2e tests
         run: hack/e2e-test.sh
