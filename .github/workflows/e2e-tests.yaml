@@ -1,0 +1,65 @@
+# GitHub Actions workflow to run e2e tests using hack/e2e-test.sh
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make bash wget
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up kind
+        uses: helm/kind-action@v1.9.0
+
+      - name: Build binaries
+        run: make build
+
+      - name: Install yq
+        run: |
+          mkdir -p bin
+          wget -O bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64
+          chmod +x bin/yq        
+
+      - name: Set e2e environment variables
+        run: |
+          echo "CREATE_KIND_CLUSTER=true" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=chart-testing" >> $GITHUB_ENV
+          echo "ARTIFACTS=bin" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_FILE=" >> $GITHUB_ENV
+
+      - name: Symlink kind binary to bin/
+        run: |
+          mkdir -p bin
+          ln -sf $(which kind) bin/kind          
+
+      - name: Set E2E_KIND_VERSION
+        run: echo "E2E_KIND_VERSION=kindest/node:v1.27.3" >> $GITHUB_ENV
+
+      - name: Install Kueue in kind cluster
+        run: make deploy
+
+      - name: Wait for Kueue pod to be running
+        run: |
+          kubectl wait --for=condition=Ready pod -l control-plane=controller-manager -n kueue-system --timeout=180s        
+
+      - name: Run e2e tests
+        run: hack/e2e-test.sh
