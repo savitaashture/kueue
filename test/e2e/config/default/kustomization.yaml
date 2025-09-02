@@ -3,7 +3,8 @@ kind: Kustomization
 
 resources:
 - ../../../../config/dev
-- ../../../../config/visibility-apf
+# Removed visibility-apf for e2e testing to avoid FlowSchema/PriorityLevelConfiguration API issues
+# - ../../../../config/visibility-apf
 
 replicas:
 - name: kueue-controller-manager
